@@ -1,23 +1,15 @@
-var
-  debug = require('debug')('EpicSearch/Index'),
-  elasticsearch = require('elasticsearch'),
-  _ = require('lodash'),
-  fns = {
-    get: './lib/get/index',
-    mget: './lib/get/mget',
-    search: './lib/search/index',
-    msearch: './lib/search/multi_search',
-    mpu: './lib/percolate/mpu',
-    get_first: './lib/get/first',
-    get_dups: './lib/get/dups',
-    delete_dups: './lib/delete/delete_dups',
-    find_and_delete_dups: './lib/delete/find_delete_dups',
-    index_by_unique: './lib/index/byUniqueKey',
-    bulk_index: './lib/index/bulk',
-    bulk: './lib/bulk',
-    index: './lib/index/index',
-    crudRead: './lib/crud/read',
-    crudUpdate: './lib/crud/update'
+'use strict'
+const debug = require('debug')('EpicSearch/Index')
+const elasticsearch = require('elasticsearch')
+const _ = require('lodash')
+
+const collectFunctions = {
+    get: './lib/collect/get/index',
+    mget: './lib/collect/get/mget',
+    search: './lib/collect/search/index',
+    msearch: './lib/collect/search/multi_search',
+    bulk: './lib/collect/bulk',
+    index: './lib/collect/index/index',
   }
 
 var EpicSearch = function(config) {
@@ -26,33 +18,31 @@ var EpicSearch = function(config) {
   }
 
   this.es = new elasticsearch.Client(_.clone(config.clientParams))
-  //this.es.native = {}
-
-  if (config.cloneClientParams) {
-    this.es.cloneClient = new elasticsearch.Client(_.clone(config.cloneClientParams))
-  }
 
   this.es.config = config
 
-  var Aggregator = require('./lib/aggregator')
-  var aggregator = new Aggregator(config)
-  var es = this.es
+  addCollectFeature(this.es)
+}
 
-  _.keys(fns)
-  .forEach(function(fnName) {
+const addCollectFeature = (es) => {
 
-    var AggregatingFunction = require(fns[fnName])
-    var fn = new AggregatingFunction(es)
+  const Aggregator = require('./lib/collect/aggregator')
+  const aggregator = new Aggregator(es.config)
 
-    var aggregatedFn = function() {
-      return aggregator.agg(fnName, fn, arguments)
+  _.keys(collectFunctions)
+  .forEach((fnName) => {
+
+    const AggregatingFunction = require(collectFunctions[fnName])
+    const fn = new AggregatingFunction(es)
+
+    const aggregatedFn = function() {
+      return aggregator.collect(fnName, fn, arguments)
     }
 
     es[fnName] = es[fnName] || aggregatedFn
-    es[fnName].agg = aggregatedFn
+    es[fnName].collect = aggregatedFn
   })
 }
-
 
 module.exports = function(config) {
   return new EpicSearch(config).es

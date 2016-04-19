@@ -19,7 +19,7 @@ module.exports =   {
       msearch: 2,
       index: 20,
       mget: 2,
-      get: 1,
+      get: 2,
       bulk_index: 2,
       search: 1,
       bulk: 20//This is required as 1, since search internally
@@ -30,7 +30,8 @@ module.exports =   {
       index_by_unique: 1000,
       get_first: 20,
       bulk_index: 1000,
-      get: 0,
+      bulk: 10,
+      get: 1000,
       bulk: 2000,
       mget: 1000,
       msearch: 1000
