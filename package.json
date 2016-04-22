@@ -10,6 +10,7 @@
     "chai": "^2.2.0",
     "debug": "^2.1.3",
     "elasticsearch": "^10.0.1",
+    "elasticsearch-query": "^1.0.3",
     "js-object-updater": "^1.0.1",
     "lodash": "^3.10.1",
     "q": "^1.1.2"

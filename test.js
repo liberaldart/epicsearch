@@ -2,7 +2,7 @@ var EpicSearch = require('./index')
 var config = require('./config')
 var es = new EpicSearch(config)
 
-es.crudUpdate({
+/**es.crudUpdate({
     type: 'event',
     _id: 'AVHDEPUuQpxtrIE1g6xi',
     update: {
@@ -10,8 +10,14 @@ es.crudUpdate({
         title_english: 'vab'
       }
     }
-  })
+  })**/
+
+  es.queryParser.parse([
+    'get test *id as ab',
+    'get test *ab._id',
+    'search test where {x: "*ab._source.x"} as xx'
+  ], {id : 1})
   .then(function(res) {
-    console.log(2, 'get', res)
+    console.log(res)
   })
   .catch(console.log)
