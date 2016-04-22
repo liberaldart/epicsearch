@@ -21,7 +21,13 @@ var EpicSearch = function(config) {
 
   this.es.config = config
 
+  addQueryParser(this.es)
   addCollectFeature(this.es)
+}
+
+const addQueryParser = (es) => {
+  const QueryParser = require('./lib/queryParser')
+  es.queryParser = new QueryParser(es)
 }
 
 const addCollectFeature = (es) => {
