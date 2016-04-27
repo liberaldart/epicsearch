@@ -35,5 +35,9 @@ module.exports =   {
       bulk: 2000,
       mget: 1000,
       msearch: 1000
-    }
-  }
+    },
+    configBasePath: './config',
+    configsToLoad: ['schema', 'web.read', 'web.search'],
+    entities: ['entity'],
+    languages: ['english', 'french']
+}

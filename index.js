@@ -9,7 +9,14 @@ const collectFunctions = {
     search: './lib/collect/search/index',
     msearch: './lib/collect/search/multi_search',
     bulk: './lib/collect/bulk',
-    index: './lib/collect/index/index',
+    index: './lib/collect/index/index'
+  }
+
+const deepFunctions = {
+    index: 'create',
+    get: 'read',
+    search: 'search',
+    update: 'update'
   }
 
 var EpicSearch = function(config) {
@@ -23,6 +30,25 @@ var EpicSearch = function(config) {
 
   addQueryParser(this.es)
   addCollectFeature(this.es)
+  addDeepFeature(this.es)
+}
+// create params for deep function
+//       1. lang
+//       2. context
+//       3. type
+//       4. fields
+//       5. q
+//       6. size
+//       7. suggest
+//       8. from
+const addDeepFeature = (es) => {
+
+  _.keys(deepFunctions)
+  .forEach((fnName) => {
+    var deepFunction = require('./lib/deep/' + deepFunctions[fnName])
+    deepFunction = new deepFunction(es)
+    es[fnName].deep = deepFunction.executes.bind(deepFunction)
+  })
 }
 
 const addQueryParser = (es) => {
