@@ -2,7 +2,7 @@ var EpicSearch = require('./index')
 var config = require('./config')
 var es = new EpicSearch(config)
 
-es.update.deep({
+/**es.update.deep({
     _index: 'test',
     _type: 'test',
     _id: '1',
@@ -14,7 +14,7 @@ es.update.deep({
   .then(function(res) {
     console.log(2, 'get', res)
   })
-  .catch(console.log)
+  .catch(console.log)**/
 /**es.queryParser.parse([
   'async each *ids as ida',[
     'get test *ida as idaTest',
@@ -77,8 +77,10 @@ es.update.deep({
 
 
 
-const assignments = ['x is 2', 'x is 4 if *x is 2 ? Else 1', 'x is 1 if *x is 4 ? Else 2' ]
-var isEqual = ['2 is 4?', '2 is 2?', '*x is 2?', '*x is 2 strict?']
+//const assignments = ['x is 2', 'x is 4 if *x is 2 ? Else 1', 'x is 1 if *x is 42 ? Else is 2']
+const assignments = ['k is {d:"*x", *x: 4}' ]
+const isEqual = ['2 is 4?', '2 is 2?', '*x is 2?', '*x is 2 strict?']
+const isEmpty = ['*x is not empty']
 const asyncEachThenGet = [
   'async each *arr as i',
     [
@@ -105,7 +107,7 @@ var testInstructions = [
   'index event'
 ]
 
-es.queryParser.parse(asyncEachThenGet, {x: 2, arr: [1, 2]})
+es.queryParser.parse(isEmpty, {x: [7], arr: [1, 2]})
 .then(function(res) {
   console.log(JSON.stringify(res))
 })
