@@ -78,9 +78,11 @@ var es = new EpicSearch(config)
 
 
 //const assignments = ['x is 2', 'x is 4 if *x is 2 ? Else 1', 'x is 1 if *x is 42 ? Else is 2']
-const assignments = ['k is {d:"*x", *x: 4}' ]
+const assignments = ['k is {d:"*x", *x: 4} if *x is empty. Else 22' ]
 const isEqual = ['2 is 4?', '2 is 2?', '*x is 2?', '*x is 2 strict?']
 const isEmpty = ['*x is not empty']
+const search = ['search test where {_id: 1} as test']
+
 const asyncEachThenGet = [
   'async each *arr as i',
     [
@@ -99,7 +101,7 @@ var testInstructions = [
       'speakerFields are {personId: "*audiochannel.speakerId", primaryLanguages: "*audiochannel.languageId"}',
       'speakerFields.translationType is *audioChannel.translationType if *audioChannel.translationType is not empty',
 
-      'search first *speakerType with *speakerFields as *speakerType. Create if needed',
+      'search *speakerType with *speakerFields as *speakerType. Create if needed',
 
       'add *speaker._id to *event.speakers if not there already',
       'add *audioChannel.languageId to *event.primaryLanguages if not there already',
@@ -107,7 +109,7 @@ var testInstructions = [
   'index event'
 ]
 
-es.queryParser.parse(isEmpty, {x: [7], arr: [1, 2]})
+es.queryParser.parse(search, {x: [7], arr: [1, 2]})
 .then(function(res) {
   console.log(JSON.stringify(res))
 })
