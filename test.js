@@ -82,7 +82,8 @@ const assignments = ['k is {d:"*x", *x: 4} if *x is empty. Else 22' ]
 const isEqual = ['2 is 4?', '2 is 2?', '*x is 2?', '*x is 2 strict?']
 const isEmpty = ['*x is not empty']
 const search = ['search test where {_id: 1} as test']
-const searchFirst = ['search first test where {x: "z"} as test', 'search first test where {x: "m"} as test. Create if not exists']
+const searchFirst = ['search first test where {x: "z"} as test', 'search test where {x: "jjm"} as test. Create if not exists']
+const memUpdate = ['addToSet 3 in *y at path arr', 'addToSet 1 in *y at path arr']
 
 const asyncEachThenGet = [
   'async each *arr as i',
@@ -97,7 +98,7 @@ var testInstructions = [
     [
       //Handle event.langauges
       'get audiochannel *contentToAudioChannel._source.audiochannelId',
-      'add *audioChannel.languageId to *event.primaryLanguages if not there already',
+      'addToSet *audioChannel.languageId in event at path primaryLanguages',
 
       //Handle event.speakers
       'speakerFields are {personId: "*audiochannel.speakerId", primaryLanguages: "*audiochannel.languageId"}',
@@ -105,12 +106,12 @@ var testInstructions = [
 
       'speakerType is speaker if *audioChannel.translationType is empty? Else is translator',
       'search first *speakerType where *speakerFields as speakerTypeEntity. Create if not exists',
-      'ensure speakerTypeEntity is in event.speakers',
+      'establish link speakers between event and speakerTypeEntity'
     ],
 ]
-
-es.queryParser.parse(searchFirst, {x: [7], arr: [1, 2]})
+const ctx = {x: [7], y: {arr: [1,2]}, arr: [1, 2]}
+es.queryParser.parse(memUpdate, ctx)
 .then(function(res) {
-  console.log(JSON.stringify(res))
+  console.log(JSON.stringify(res), ctx.y)
 })
 .catch(console.log)
