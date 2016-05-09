@@ -47,7 +47,7 @@ const addDeepFeature = (es) => {
   .forEach((fnName) => {
     var deepFunction = require('./lib/deep/' + deepFunctions[fnName])
     deepFunction = new deepFunction(es)
-    es[fnName].deep = deepFunction.executes.bind(deepFunction)
+    es[fnName].deep = deepFunction.execute.bind(deepFunction)
   })
 }
 
