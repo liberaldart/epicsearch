@@ -20,7 +20,9 @@
     "ramda": "^0.21.0",
     "toml": "^2.3.0",
   },
-  "devDependencies": {},
+  "devDependencies": {
+        "mocha": "^2.4.5"
+  },
   "scripts": {
     "test": "mocha",
     "start": "node server.js"
