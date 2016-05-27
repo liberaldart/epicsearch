@@ -14,20 +14,17 @@ configsToLoad.forEach(function(path) {
   path = path.split('.')
   let configAtPath = entityConfigs
 
-  path.forEach(function(key) {
-    if (!configAtPath[key]) {
-      configAtPath[key] = {}
-    }
-    configAtPath = configAtPath[key]
+  path.forEach(function(key) { //Create the path for nested configuration
+    configAtPath = configAtPath[key] = configAtPath[key] || {}
   })
 
   entities.forEach(function(entityType) {
     const configName =  entityType
     try {
-      var configPath = './' + path.join('/') + '/' + configName
+      let configPath = './' + path.join('/') + '/' + configName
       _.get(entityConfigs, path)[entityType] = require(configPath)
     } catch (err) {
-      debug('could not find', configName, ' at ', path + '. Or perhaps there was another runtime error in loading the module')
+      debug('could not find', configName, ' at ', path + '. Or perhaps there was another runtime error in loading the module? Ignoring this config')
     }
   })
 })

@@ -16,6 +16,7 @@ const deepFunctions = {
     index: 'create',
     get: 'read',
     search: 'search',
+    link: 'link',
     update: 'update'
   }
 
@@ -23,6 +24,7 @@ var EpicSearch = function(config) {
   if (typeof config === 'string') {//it is path to config
     config = require(config)
   }
+  config.schema = require(config.configBasePath)
 
   this.es = new elasticsearch.Client(_.clone(config.clientParams))
 
@@ -42,12 +44,12 @@ var EpicSearch = function(config) {
 //       7. suggest
 //       8. from
 const addDeepFeature = (es) => {
-
+  es.deep = {}
   _.keys(deepFunctions)
   .forEach((fnName) => {
-    var deepFunction = require('./lib/deep/' + deepFunctions[fnName])
-    deepFunction = new deepFunction(es)
-    es[fnName].deep = deepFunction.execute.bind(deepFunction)
+    const DeepFunction = require('./lib/deep/' + deepFunctions[fnName])
+    const deepFunction = new DeepFunction(es)
+    es.deep[fnName] = deepFunction.execute.bind(deepFunction)
   })
 }
 

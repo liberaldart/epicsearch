@@ -1,8 +1,12 @@
 module.exports = {
   a: {
     type: [String]
+  },
+  relA: {
+    isRelationship: true,
+    revName: 'relB',
+    type: 'b'
   }
-  
 }
 
 // entity:{

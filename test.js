@@ -70,6 +70,8 @@ const searchFirst = ['search first test where {x: "z"} as test', 'search test wh
 const memUpdate = ['addToSet 3 in *y at path arr', 'addToSet 1 in *y at path arr']
 const memUpdateNew = ['addToSet 3 at *y.arr']
 
+const link = ['link a with b as relB']
+
 const asyncEachThenGet = [
   'async each *arr as i',
     [
@@ -96,8 +98,8 @@ var testInstructions = [
     ],
 ]
 
-const ctx = {x: [7], y: {arr: [1,2]}, arr: [1, 2]}
-es.queryParser.parse(memUpdateNew, ctx)
+const ctx = {x: [7], y: {arr: [1,2]}, arr: [1, 2], a: {_type: 'a', _id: 1}, b: {_type: 'b', _id: 1}}
+es.queryParser.parse(link, ctx)
 .then(function(res) {
   console.log(JSON.stringify(res), ctx.y)
 })
@@ -108,8 +110,9 @@ es.queryParser.parse(memUpdateNew, ctx)
  *THINGS TO DO
 Add fields and join in search DSL (low prio)
 module that takes toml files and returns jsons from them
-new schema syntax in toml 
-grammar: update update, search and linking
+new schema syntax in toml
+grammar: update update
+grammar: add linking
 deep/update or create: allow triggers
 db migration: create schema for DL
 dbMigration: create triggers
