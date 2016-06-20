@@ -1,0 +1,66 @@
+var es = new epicsearch('pathToConfig')
+
+>>baseConfig
+[clientParams]
+  [[clientParams.hosts]]
+    host = 'localhost'
+    protocol = 'http'
+    port = '9200'
+  maxConnections = 200
+  requestTimeout = 90000
+
+[timeouts]
+  get = 1000
+  search = 2000
+[batchSizes]
+  get = 10
+  search = 100
+
+dbConfig = '/path/to/schemas/folder'
+
+>>Schema folder contains following folders and files
+entities = 'entityTypes with their fields. If field is to be stored in another entity's meta, then specify the path to copy/union it also'
+relationships.txt = 'relations between entities'
+triggers = 'entity level triggers to run on create/update/delete'
+
+
+>>>Sample entity fields file
+[field1]
+  type = [String]
+  copyTo = 'relationAB'        
+  unionIn = 'relationAB.fieldWithUnionOfField1OfA' //fieldWithUnionOfField1OfA must be defined in entityB, else throw error in reading config
+
+>>Relations file will in our own custom format
+
+relationAB <> relationBA
+  entityA <> [entityB]
+  entityC <> [entityD]
+
+>>Output will be a json with following structure
+[configs]
+
+  [schema]
+    [A]
+      [field1]
+        type = [String]
+        cardinality = 'many'
+        basicType = String
+        copyTo = 'relationAB'        
+        unionIn = 'relationAB.fieldWithUnionOfField1OfA' //fieldWithUnionOfField1OfA must be defined in entityB, else throw error in reading config
+      [relationAB] //reltaions will be merged into entity definitions also, for backward compatibility
+        isRelationship = true
+        type = ['entityB']
+        to = 'entityB'
+        cardinality = 'many' //many, one
+        inName = 'relationBA'
+        inCardinality = 'one'
+    [B]
+      [relationBA] //reltaions will be merged into entity definitions also, for backward compatibility
+        isRelationship = true
+        type = 'entityA'
+        to = 'entityA'
+        cardinality = 'one'
+        inName = 'relationAB'
+        inCardinality = 'many'
+
+  [triggers]

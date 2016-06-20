@@ -20,11 +20,9 @@ const deepFunctions = {
     update: 'update'
   }
 
-var EpicSearch = function(config) {
-  if (typeof config === 'string') {//it is path to config
-    config = require(config)
-  }
-  config.schema = require(config.configBasePath)
+const EpicSearch = function(configFolderPath) {
+
+  const config = require('./lib/configLoader')(configFolderPath)
 
   this.es = new elasticsearch.Client(_.clone(config.clientParams))
 
@@ -34,15 +32,7 @@ var EpicSearch = function(config) {
   addCollectFeature(this.es)
   addDeepFeature(this.es)
 }
-// create params for deep function
-//       1. lang
-//       2. context
-//       3. type
-//       4. fields
-//       5. q
-//       6. size
-//       7. suggest
-//       8. from
+
 const addDeepFeature = (es) => {
   es.deep = {}
   _.keys(deepFunctions)
@@ -78,7 +68,7 @@ const addCollectFeature = (es) => {
   })
 }
 
-module.exports = function(config) {
-  return new EpicSearch(config).es
+module.exports = function(configFolderPath) {
+  return new EpicSearch(configFolderPath).es
 }
 

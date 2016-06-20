@@ -1,0 +1,7 @@
+maxConnections = 200
+requestTimeout = 90000
+
+[[hosts]]
+  host = 'localhost'
+  protocol = 'http'
+  port = '9200'

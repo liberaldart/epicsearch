@@ -1,0 +1,4 @@
+qelationAB <> relationBA
+  A <> [B]
+qelationXY
+  A <> B

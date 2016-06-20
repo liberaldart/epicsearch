@@ -1,0 +1,4 @@
+[field1]
+  type = ['String']
+  copyTo = 'relationAB'        
+  # unionIn = 'relationAB.fieldWithUnionOfField1OfA' //fieldWithUnionOfField1OfA must be defined in entityB, else throw error in reading config
