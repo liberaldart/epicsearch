@@ -65,6 +65,7 @@ const asyncEachThenGet = [
     ]
 ]
 
+const index = ['index *y as type a', 'index *m']
 
 var testInstructions = [
   'get event *content.eventId',
@@ -84,8 +85,8 @@ var testInstructions = [
     ],
 ]
 
-const ctx = {x: [7], y: {arr: [1,2]}, arr: [1, 2], a: {_type: 'a', _id: "1"}, b: {_type: 'b', _id: "1"}}
-es.queryParser.parse(link, ctx)
+const ctx = {x: [7], y: {arr: [1,2]}, arr: [1, 2], a: {_type: 'a', _id: "1"}, b: {_type: 'b', _id: "1"}, m: {_type: "a", _source: {}, _id: "2"}}
+es.queryParser.parse(index, ctx)
 .then(function(res) {
   console.log(JSON.stringify(res), ctx.y)
 })
