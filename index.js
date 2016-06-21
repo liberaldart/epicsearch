@@ -23,8 +23,7 @@ const deepFunctions = {
 const EpicSearch = function(configFolderPath) {
 
   const config = require('./lib/configLoader')(configFolderPath)
-
-  this.es = new elasticsearch.Client(_.clone(config.clientParams))
+  this.es = new elasticsearch.Client(_.clone(config.elasticsearch))
 
   this.es.config = config
 
