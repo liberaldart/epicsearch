@@ -84,7 +84,7 @@ var testInstructions = [
     ],
 ]
 
-const ctx = {x: [7], y: {arr: [1,2]}, arr: [1, 2], a: {_type: 'a', _id: 1}, b: {_type: 'b', _id: 1}}
+const ctx = {x: [7], y: {arr: [1,2]}, arr: [1, 2], a: {_type: 'a', _id: "1"}, b: {_type: 'b', _id: "1"}}
 es.queryParser.parse(link, ctx)
 .then(function(res) {
   console.log(JSON.stringify(res), ctx.y)
@@ -100,6 +100,7 @@ DONE new schema syntax in toml
 grammar: update update
 grammar: add linking
 deep/update or create: allow triggers
+if link is already there, dont resave that entity.
 db migration: create schema for DL
 dbMigration: create triggers
 cached Execution: cache search results, especially docs (by id) in memory

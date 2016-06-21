@@ -1,4 +1,4 @@
 qelationAB <> relationBA
-  A <> [B]
+  a <> [b]
 qelationXY
-  A <> B
+  a <> b
