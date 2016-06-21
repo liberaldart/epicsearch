@@ -23,19 +23,6 @@ Test case coverage being done
     console.log(2, 'get', res)
   })
   .catch(console.log)**/
-/**es.queryParser.parse([
-  'async each *ids as ida',[
-    'get test *ida as idaTest',
-    'async each *ids as id',[
-      'get test *id as x',
-      'addToSet *idaTest._id in *x at _source.y'
-    ]
-  ]
-], {ids: [1, 2]})
-.then(console.log)
-.catch((e) => {
-  console.log(e, e.stack)
-})**/
 
 /**'search person where {"name.suggest": *text} as persons. Retrieve field speakers',
 'async each persons.hits.hits as person',[
@@ -50,8 +37,7 @@ Test case coverage being done
 
 
 var EpicSearch = require('./index')
-var config = require('./config')
-var es = new EpicSearch(config)
+var es = new EpicSearch('./newConfig')
 
 //'search speakers where person.name = *text'
 //const assignments = ['x is 2', 'x is 4 if *x is 2 ? Else 1', 'x is 1 if *x is 42 ? Else is 2']
@@ -63,14 +49,14 @@ const isEmpty = ['*x is not empty']
 
 const search = ['search test where {_id: 1} as test']
 
-const searchWithJoin = ['search test where {_id: 1} as test with fields a, b. Join relationA with fields c,d']
+const searchWithJoin = ['search test where {_id: 1} as test with fields a, b. Join relationA with fields c,d'] //Not implemented yet
 
 const searchFirst = ['search first test where {x: "z"} as test', 'search test where {x: "jjm"} as test. Create if not exists']
 
 const memUpdate = ['addToSet 3 in *y at path arr', 'addToSet 1 in *y at path arr']
-const memUpdateNew = ['addToSet 3 at *y.arr']
+const memUpdateNew = ['push 3 at *y.arr']
 
-const link = ['link a with b as relB']
+const link = ['link *a with *b as qelationAB']
 
 const asyncEachThenGet = [
   'async each *arr as i',
@@ -98,7 +84,7 @@ var testInstructions = [
     ],
 ]
 
-const ctx = {x: [7], y: {arr: [1,2]}, arr: [1, 2], a: {_type: 'a', _id: 1}, b: {_type: 'b', _id: 1}}
+const ctx = {x: [7], y: {arr: [1,2]}, arr: [1, 2], a: {_type: 'a', _id: "1"}, b: {_type: 'b', _id: "1"}}
 es.queryParser.parse(link, ctx)
 .then(function(res) {
   console.log(JSON.stringify(res), ctx.y)
@@ -109,11 +95,12 @@ es.queryParser.parse(link, ctx)
 /***
  *THINGS TO DO
 Add fields and join in search DSL (low prio)
-module that takes toml files and returns jsons from them
-new schema syntax in toml
+DONE module that takes toml files and returns jsons from them
+DONE new schema syntax in toml
 grammar: update update
 grammar: add linking
 deep/update or create: allow triggers
+if link is already there, dont resave that entity.
 db migration: create schema for DL
 dbMigration: create triggers
 cached Execution: cache search results, especially docs (by id) in memory
