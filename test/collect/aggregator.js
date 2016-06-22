@@ -10,6 +10,6 @@ it('Request should be triggered after the timeout in config.timeouts', (done) =>
     }).should.notify(done);
 });
 
-it('Request shold be triggered after collecting config.batch_size.{function name} requests', (done) => {
-
-}).should.notify(done);
+// it('Request shold be triggered after collecting config.batch_size.{function name} requests', (done) => {
+//
+// }).should.notify(done);
