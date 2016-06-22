@@ -86,7 +86,7 @@ var testInstructions = [
 ]
 
 const ctx = {x: [7], y: {arr: [1,2]}, arr: [1, 2], a: {_type: 'a', _id: "1"}, b: {_type: 'b', _id: "1"}, m: {_type: "a", _source: {}, _id: "2"}}
-es.queryParser.parse(index, ctx)
+es.dsl.execute(index, ctx)
 .then(function(res) {
   console.log(JSON.stringify(res), ctx.y)
 })

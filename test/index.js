@@ -14,7 +14,7 @@ describe('testing epicsearch', function() {
     require('./collect/index/index');
   });
 
-  describe('queryParser API', () => {
+  describe('DSL API', () => {
 
   });
 
