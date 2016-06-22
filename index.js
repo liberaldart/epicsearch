@@ -27,7 +27,7 @@ const EpicSearch = function(configFolderPath) {
 
   this.es.config = config
 
-  addQueryParser(this.es)
+  addDslFeature(this.es)
   addCollectFeature(this.es)
   addDeepFeature(this.es)
 }
@@ -42,9 +42,9 @@ const addDeepFeature = (es) => {
   })
 }
 
-const addQueryParser = (es) => {
-  const QueryParser = require('./lib/queryParser')
-  es.queryParser = new QueryParser(es)
+const addDslFeature = (es) => {
+  const DslEngine = require('./lib/dslEngine')
+  es.dsl = new DslEngine(es)
 }
 
 const addCollectFeature = (es) => {
