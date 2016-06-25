@@ -64,3 +64,56 @@ relationAB <> relationBA
         inCardinality = 'many'
 
   [triggers]
+
+CACHE
+Es has a cache object in it. Cache can be used to cache any query responses, for any given duration. In case two searches or get queries fetch the same entity, it is optimistically merged. and its state shared
+Cache has methods
+syncWithEs
+get
+search
+index //indexes in es and keeps image in cache
+
+CRUD
+Do the deep operation. Get a cache with entities marked dirty as part of every crud function's response. Flush the dirty ones to ES if you have to.
+Use cache.syncWithEs to flush the dirty ones to ES.
+
+@param {Object} params
+@param {Cache} cache
+@return {Object} - a hash with {cache, result, status, err} Each dirty entity will be marked so in its header (above _source or doc)
+
+DB MIGRATION
+Pass around a cache during the context execution flow 
+Lookup in cache first when retriving using get/type/id or search/query. If not in cache, then fetch from ES and save in cache for later.
+Update should happen in objects retrieved from cache, using jsobjectupdater. Mark those objects as updated/dirty.
+Indexing a document should also save it in cache for later get.
+In the end, dirty objects in cache will be flushed to db.
+
+##########What is a DEEP operation########
+>Updates work like butterfly effect in a connected graph with pre-defined dependencies between states of different nodes (entities).
+
+Updating a field of a single entity can change dependent fields of immediate or distant relatives, i.e. other nodes of this entity's subgraph.
+
+Linking two entities together, connects not only those two, but their subgraphs (families) too. This could mean cascading updates across the new and larger connected subgraph.
+>Get operations also include joins with other related nodes in the grap. These joins can be infinitely deep.
+
+##########In a DEEP DEEP operation########
+>>START
+A transient cache is created
+
+>>DURING
+The cache is passed to each deep.{crud} call.
+All get and search operations to DB are done in the 'together' mode
+The entities from get and search results are cached.
+The entities from index operations are also indexed in the cache only (not yet in the DB) 
+Update and linking mutate concerned entitys' state in the cache itself.
+
+>>END //when promise resolves
+The updated and newly created entities in cache are flushed to DB, in case of success. Response contains {result, status, err}
+In case of any error, the whole operation is aborted. Error thrown with {err, cache, status} 
+
+Note: if you don't pass cache to deep calls, the deep call will create one internally and flush it before returning. If you pass a cache, it will not flush. You will have to flush it when the deep call returns.
+
+es.get
+es.deep.get/update/link/index
+es.together.get/update/bulk/mget/msearch/search/index
+es.dsl.execute([instructions])
