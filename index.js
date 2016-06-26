@@ -14,7 +14,7 @@ const collectFunctions = {
 
 const deepFunctions = {
     index: 'create',
-    get: 'read',
+    get: 'get',
     search: 'search',
     link: 'link',
     update: 'update'
