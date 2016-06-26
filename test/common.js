@@ -7,4 +7,4 @@ global.assert = chai.assert;
 var EpicSearch = require('../index')
 
 global.config = require('../config')
-global.es = new EpicSearch(config)
+global.es = new EpicSearch('newConfig/')
