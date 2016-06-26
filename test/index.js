@@ -15,7 +15,8 @@ describe('testing epicsearch', function() {
   });
 
   describe('DSL API', () => {
-
+    require('./dslEngine/resolve');
+    require('./dslEngine/booleanExpression')
   });
 
   describe('deep API', () => {
