@@ -6,6 +6,7 @@ Continue to use elasticsearch in Nodejs as you would. On top you can...
 * Manage relationships and dependencies between nodes of the graph
 * Access it using a query DSL which looks like english (Chrome extension to be made during HH16)
 * Performance enhancement
+* Multi lingual storage and retrieval, including search
 * Role/rule based access management for crud operations
 
 Test case coverage being done
@@ -37,7 +38,7 @@ Test case coverage being done
 
 
 var EpicSearch = require('./index')
-var es = new EpicSearch('./newConfig')
+var es = new EpicSearch('/home/master/work/code/epicsearch/newConfig')
 
 //'search speakers where person.name = *text'
 //const assignments = ['x is 2', 'x is 4 if *x is 2 ? Else 1', 'x is 1 if *x is 42 ? Else is 2']
@@ -67,7 +68,7 @@ const asyncEachThenGet = [
 
 const index = ['index *y as type a', 'index *m']
 
-var testInstructions = [
+var testInstructions = [ //Get and search retrieve entity object(s) from in memory cache which in turn is flled from ES as each respective query happens for first time. These are mutable objects. The idea is to let them go through a process of multiple mutations in memory during the migration process. Once the old tables are processed, (only) the dirty entities in cache are flushed to ES.
   'get event *content.eventId',
   'search content-to-audio-channel where {contentId: "*content._id"} as cac. Retrieve fields audioChannelId',
   'async each cac.hits.hits as contentToAudioChannel',
@@ -76,19 +77,22 @@ var testInstructions = [
       'get audiochannel *contentToAudioChannel._source.audiochannelId',
       'addToSet *audioChannel.languageId in event at path primaryLanguages',
 
-      //Handle event.speakers
+      //Handle event.speakers/translators
       'speakerFields are {personId: "*audiochannel.speakerId", primaryLanguages: "*audiochannel.languageId"}',
       'speakerFields.translationType is *audioChannel.translationType if *audioChannel.translationType is not empty',
+
       'speakerType is speaker if *audioChannel.translationType is empty? Else is translator',
-      'search first *speakerType where *speakerFields as speakerTypeEntity. Create if not exists',
-      'link speaker with event as speakers'
+      'search first *speakerType where *speakerFields as speakerOrTranslator. Create if not exists',
+
+      'relationship is speakers if *audioChannel.translationType is empty? Else is translators',
+      'link *speakerOrTranslator with *event as *relationship'
     ],
 ]
 
 const ctx = {x: [7], y: {arr: [1,2]}, arr: [1, 2], a: {_type: 'a', _id: "1"}, b: {_type: 'b', _id: "1"}, m: {_type: "a", _source: {}, _id: "2"}}
-es.dsl.execute(index, ctx)
+es.dsl.execute(['x is *y'], ctx)
 .then(function(res) {
-  console.log(JSON.stringify(res), ctx.y)
+  console.log(JSON.stringify(res), ctx.x)
 })
 .catch(console.log)
 
@@ -96,23 +100,15 @@ es.dsl.execute(index, ctx)
 /***
  *THINGS TO DO
 Add fields and join in search DSL (low prio)
-DONE module that takes toml files and returns jsons from them
-DONE new schema syntax in toml
-grammar: update update
-grammar: add linking
-deep/update or create: allow triggers
-if link is already there, dont resave that entity.
-db migration: create schema for DL
-dbMigration: create triggers
-cached Execution: cache search results, especially docs (by id) in memory
-dbMIgration: allow cached exuction so that multiple updates are merged in a single doc. The cache is flushed in db at end. FOr performance
-db migration: start inserting tables in the database and run triggers to set data dependencies
-relationship management file
-  speakers <> events
-    event <> speaker
-    one to many
-    add speaker.primaryLanguages to event.primaryLanguages
+Implement and test - search*, get
+???Support doc: {key:val} OR {key:val} type update in deep/update. Basically ES format.
+To test: Save only updated entities. If link is already there, dont resave that entity.
 
+
+Define web.search and web.read contexts in TOML
+db migration: create schema for DL
+Progress: dbMIgration: allow cached exuction so that multiple updates are merged in a single doc. The cache is flushed in db at end. FOr performance
+db migration: start inserting tables in the database and run triggers to set data dependencies
  *
  *
  */
