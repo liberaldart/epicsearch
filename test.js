@@ -25,7 +25,7 @@ Test case coverage being done
   })
   .catch(console.log)**/
 
-/**'search person where {"name.suggest": *text} as persons. Retrieve field speakers',
+/**'search person where {'name.suggest': *text} as persons. Retrieve field speakers',
 'async each persons.hits.hits as person',[
   'add every *person.speakers to *speakerIds'
 ]
@@ -42,22 +42,22 @@ var es = new EpicSearch('/home/master/work/code/epicsearch/newConfig')
 
 //'search speakers where person.name = *text'
 //const assignments = ['x is 2', 'x is 4 if *x is 2 ? Else 1', 'x is 1 if *x is 42 ? Else is 2']
-const assignments = ['k is {d:"*x", *x: 4} if *x is empty. Else 22' ]
+const assignments = ['k is {d: "*x", *x: 4} if *x is empty. Else 22' ]
 
 const isEqual = ['2 is 4?', '2 is 2?', '*x is 2?', '*x is 2 strict?']
 
 const isEmpty = ['*x is not empty']
 
-const search = ['search test where {_id: 1} as test']
+const search = ['search first c where {_id: 1} as test. Create if not exists']
 
 const searchWithJoin = ['search test where {_id: 1} as test with fields a, b. Join relationA with fields c,d'] //Not implemented yet
 
 const searchFirst = ['search first test where {x: "z"} as test', 'search test where {x: "jjm"} as test. Create if not exists']
 
-const memUpdate = ['addToSet 3 in *y at path arr', 'addToSet 1 in *y at path arr']
+const memUpdate = ['addToSet 1 at *y.arr']
 const memUpdateNew = ['push 3 at *y.arr']
 
-const link = ['link *a with *b as qelationAB']
+const link = ['link *a with *b as relationAB']
 
 const asyncEachThenGet = [
   'async each *arr as i',
@@ -89,10 +89,10 @@ var testInstructions = [ //Get and search retrieve entity object(s) from in memo
     ],
 ]
 
-const ctx = {x: [7], y: {arr: [1,2]}, arr: [1, 2], a: {_type: 'a', _id: "1"}, b: {_type: 'b', _id: "1"}, m: {_type: "a", _source: {}, _id: "2"}}
-es.dsl.execute(['x is *y'], ctx)
+const ctx = {x: [7], y: {arr: [1,2]}, arr: [1, 2], a: {_type: 'a', _id: '12'}, b: {_type: 'b', _id: '1'}, m: {_type: 'a', _source: {}, _id: '2'}}
+es.dsl.execute(link, ctx)
 .then(function(res) {
-  console.log(JSON.stringify(res), ctx.x)
+  console.log(JSON.stringify(res), ctx.y)
 })
 .catch(console.log)
 
@@ -100,18 +100,42 @@ es.dsl.execute(['x is *y'], ctx)
 /***
  *THINGS TO DO
 Add fields and join in search DSL (low prio)
-Implement and test - search*, get
-???Support doc: {key:val} OR {key:val} type update in deep/update. Basically ES format.
-To test: Save only updated entities. If link is already there, dont resave that entity.
-
-
+Test update with copyTo, unionIn across deep paths
+Support for multi depth copy to declarations
+Support for non schema type in queries
 Define web.search and web.read contexts in TOML
 db migration: create schema for DL
-Progress: dbMIgration: allow cached exuction so that multiple updates are merged in a single doc. The cache is flushed in db at end. FOr performance
-db migration: start inserting tables in the database and run triggers to set data dependencies
+fix function results for lib/deep
+
+TEST UPDATE
+PASS - If no field has changed in source entity, do not flush it
+
+TEST UPDATE - Union in
+* Test copy to relationship across one level of depth, two levels of depth, then 4 levels of depth (induction principal)
+* PASS - Adding a new field to an array should update copyTo relationship
+* PASS - Setting a field should update copyTo relationship
+* Removing a field should unset it from copyTo relationships
+
+TEST UPDATE - Copy To
+* Test copy to relationship across two levels of depth, then 4 levels of depth
+* * Working - AddToSet, Set, unset, push, pull
+
+TEST UPDTAE - Union in
+
+
+TEST CREATE -
+
+TEST GET
+
+TEST SEARCH
+
+
+
+LOng term:
+Should work without language
+Should also take index along with type
+Versioning and locking for transactions
+
  *
  *
  */
-
-
-
