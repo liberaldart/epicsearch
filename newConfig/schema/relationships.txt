@@ -5,13 +5,21 @@ speakers <> events
 sessions <> event
   event <> [session]
 
-primaryLanguages
+sessions <> speakers
+  [speaker] <> [session] 
+
+primaryLanguages <> speakers
   [speaker] <> [language]
+
+primaryLanguages
   [session] <> [language]
   [event] <> [language]
 
 sessions <> video
   [video] <> [session]
+
+speakers <> video
+  [video] <> [speaker] 
 
 event <> video
   [video] <> event
