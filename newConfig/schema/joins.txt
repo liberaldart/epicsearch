@@ -1,0 +1,14 @@
+
+[event]
+  speakers.person{name}
+  speakers.primaryLanguages{name}
+  
+[video]
+  events{title}
+  sessions{title}
+  speakers.person{name}
+  speakers.primaryLanguages{name}
+
+[speaker]
+  person{name}
+  primaryLanguages{name}

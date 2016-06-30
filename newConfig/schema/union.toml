@@ -1,0 +1,12 @@
+
+[event]
+speakers = '+session.speakers +video.speakers'
+video = '+session.video'
+primaryLanguages = '+session.speakers.primaryLanguages'
+
+[session]
+speakers = '+video.speakers'
+
+
+[folder]
+events = 'parentFolder.events'

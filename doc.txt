@@ -63,8 +63,6 @@ relationAB <> relationBA
         inName = 'relationAB'
         inCardinality = 'many'
 
-  [triggers]
-
 CACHE
 Es has a cache object in it. Cache can be used to cache any query responses, for any given duration. In case two searches or get queries fetch the same entity, it is optimistically merged. and its state shared
 Cache has methods

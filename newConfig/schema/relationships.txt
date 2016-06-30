@@ -1,4 +1,17 @@
-qelationAB <> relationBA
-  a <> [b]
-qelationXY
-  a <> b
+
+speakers <> events
+  [event] <> [speaker] 
+
+sessions <> event
+  event <> [session]
+
+primaryLanguages
+  [speaker] <> [language]
+  [session] <> [language]
+  [event] <> [language]
+
+sessions <> video
+  [video] <> [session]
+
+event <> video
+  [video] <> event
