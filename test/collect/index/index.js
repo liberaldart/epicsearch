@@ -1,13 +1,8 @@
 it('Index Response', (done) => {
-  var results = es.index.collect({body: {url: '13s'}, id: '1', index: config.default_index, type: config.default_type});
+  var results = es.index.collect({index: 'tests', type: 'test', id: 3, body: {field : 'Test 3'}});
 
   results.should.be.fulfilled.then((res) => {
-    expect(res).to.be.an('object');
-    expect(res).to.have.property('_type');
-    expect(res).to.have.property('_index');
-    expect(res).to.have.property('_id');
-    expect(res).to.have.property('_version');
-    expect(res).to.have.property('status');
-    expect(res).to.have.property('created');
+    expect(res).to.be.an('object')
+    .and.to.have.all.keys(['_type', '_index', '_id', '_version', 'status', 'created'])
   }).should.notify(done);
-});
+})
