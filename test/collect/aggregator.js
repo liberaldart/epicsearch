@@ -1,7 +1,7 @@
 it('Request should be triggered after the timeout in config.timeouts', (done) => {
   var startTime = new Date().getTime();
 
-    var results = es.get.collect({id: 1, index: config.default_index, type: config.default_type});
+    var results = es.get.collect({id: 1, index: 'tests', type: 'test'});
 
     results.should.be.fulfilled.then(() => {
       var finalTime = new Date().getTime() - startTime;
