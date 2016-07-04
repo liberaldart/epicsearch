@@ -1,6 +1,6 @@
 
 [event]
-speakers = '+sessions.speakers +video.speakers'
+speakers = '+sessions.speakers'
 video = '+sessions.video'
 primaryLanguages = '+sessions.speakers.primaryLanguages'
 
