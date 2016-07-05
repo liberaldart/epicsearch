@@ -2,7 +2,6 @@
 /**An elasticsearch client in NodeJS with deep relationship managenent, a query dsl and performance enhancement
 
 Continue to use elasticsearch in Nodejs as you would. On top you can...
-  
 * Manage relationships and dependencies between nodes of the graph
 * Access it using a query DSL which looks like english (Chrome extension to be made during HH16)
 * Performance enhancement
@@ -57,7 +56,7 @@ const searchFirst = ['search first test where {x: "z"} as test', 'search test wh
 const memUpdate = ['addToSet 1 at *y.arr']
 const memUpdateNew = ['push 3 at *y.arr']
 
-const link = ['link *a with *b as relationAB']
+const link = ['link *session with *speaker as speakers']
 
 const asyncEachThenGet = [
   'async each *arr as i',
@@ -66,7 +65,31 @@ const asyncEachThenGet = [
     ]
 ]
 
-const index = ['index *y as type a', 'index *m', 'index *session']
+const index = ['index *y as type a', 'index *m', 'index *session', 'index *speaker', 'index *hindi', 'index *english']
+
+const ctx = {
+  x: [7],
+  y: {arr: [1,2]},
+  arr: [1, 2],
+  a: {_type: 'a', _id: '12'},
+  b: {_type: 'b', _id: '1'},
+  m: {_type: 'a', _source: {}, _id: '2'},
+  session: {_id: 1, _type: 'session', _source: {
+    event: {_id: 1},
+    video: [{_id: 1}]
+  }},
+  hindi: {_id: 1, _type: 'language', _source: {name: 'hindi'}},
+  english: {_id: 2, _type: 'language', _source: {name: 'english'}},
+  speaker: {_id: 1, _type: 'speaker', _source: {
+    primaryLanguages: [{_id: 1}]}
+  }
+}
+
+es.dsl.execute(index, ctx)
+.then(function(res) {
+  console.log(JSON.stringify(res), ctx.test)
+})
+.catch(console.log)
 
 var testInstructions = [ //Get and search retrieve entity object(s) from in memory cache which in turn is flled from ES as each respective query happens for first time. These are mutable objects. The idea is to let them go through a process of multiple mutations in memory during the migration process. Once the old tables are processed, (only) the dirty entities in cache are flushed to ES.
   'get event *content.eventId',
@@ -89,13 +112,6 @@ var testInstructions = [ //Get and search retrieve entity object(s) from in memo
     ],
 ]
 
-const ctx = {x: [7], y: {arr: [1,2]}, arr: [1, 2], a: {_type: 'a', _id: '12'}, b: {_type: 'b', _id: '1'}, m: {_type: 'a', _source: {}, _id: '2'}, session: {_id: 1, _type: 'session', _source: {event: {_id: 1}, video: [{_id: 1}]}}}
-es.dsl.execute(index, ctx)
-.then(function(res) {
-  console.log(JSON.stringify(res), ctx.test)
-})
-.catch(console.log)
-
 
 /***
  *THINGS TO DO
@@ -103,7 +119,7 @@ DONE Change from storing strings of foreign keys to objects with _id and own:tru
 Support for multi depth join at storage level (denormalization)
 Support for multi lingual field in field def
 fix function results for lib/deep
-Support for multi depth unionIn with name of field included 
+Support for multi depth unionIn with name of field included
 
 
 
