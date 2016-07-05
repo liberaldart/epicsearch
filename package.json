@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "async-q": "^0.3.1",
+    "asyncawait": "^1.0.6",
     "chai": "^2.2.0",
     "chai-as-promised": "^5.3.0",
     "debug": "^2.1.3",

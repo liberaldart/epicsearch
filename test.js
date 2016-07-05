@@ -47,11 +47,9 @@ const isEqual = ['2 is 4?', '2 is 2?', '*x is 2?', '*x is 2 strict?']
 
 const isEmpty = ['*x is not empty']
 
-const search = ['search first c where {_id: 1} as test. Create if not exists']
+const search = ['search first event where {x: 1} as event. Create if not exists', 'search event where {_id: 1} as event2']
 
 const searchWithJoin = ['search test where {_id: 1} as test with fields a, b. Join relationA with fields c,d'] //Not implemented yet
-
-const searchFirst = ['search first test where {x: "z"} as test', 'search test where {x: "jjm"} as test. Create if not exists']
 
 const memUpdate = ['addToSet 1 at *y.arr']
 const memUpdateNew = ['push 3 at *y.arr']
@@ -65,7 +63,7 @@ const asyncEachThenGet = [
     ]
 ]
 
-const index = ['index *y as type a', 'index *m', 'index *session', 'index *speaker', 'index *hindi', 'index *english']
+const index = ['index *session', 'index *speaker', 'index *hindi', 'index *english', 'index *event']
 
 const ctx = {
   x: [7],
@@ -74,10 +72,8 @@ const ctx = {
   a: {_type: 'a', _id: '12'},
   b: {_type: 'b', _id: '1'},
   m: {_type: 'a', _source: {}, _id: '2'},
-  session: {_id: 1, _type: 'session', _source: {
-    event: {_id: 1},
-    video: [{_id: 1}]
-  }},
+  event: {_id: 1, _type: 'event', _source: {}},
+  session: {_id: 1, _type: 'session', _source: {}},
   hindi: {_id: 1, _type: 'language', _source: {name: 'hindi'}},
   english: {_id: 2, _type: 'language', _source: {name: 'english'}},
   speaker: {_id: 1, _type: 'speaker', _source: {
@@ -87,7 +83,7 @@ const ctx = {
 
 es.dsl.execute(index, ctx)
 .then(function(res) {
-  console.log(JSON.stringify(res), ctx.test)
+  console.log( ctx.event, ctx.event2)
 })
 .catch(console.log)
 
@@ -115,22 +111,27 @@ var testInstructions = [ //Get and search retrieve entity object(s) from in memo
 
 /***
  *THINGS TO DO
-DONE Change from storing strings of foreign keys to objects with _id and own:true (of added directly to this entity, and is not union from another place)
-Support for multi depth join at storage level (denormalization)
-Support for multi lingual field in field def
-fix function results for lib/deep
-Support for multi depth unionIn with name of field included
+Ayush - Support for multi depth join at storage level (denormalization)
+Ayush - Support for multi lingual field in field def
+
+Test update with join across deep paths
+Ashu = Add cache to dsl
 
 
 
-Test update with joined data, unionIn across deep paths
-Add cache to dsl
+
+
 Generate ES index mappings though config (nested for relationships)
 Support for non schema type in queries
 Define web.search and web.read contexts in TOML
 db migration: create schema for DL
 Add fields and join in search DSL (low prio)
 
+DONE fix function results for lib/deep
+DONE Support for multi depth unionIn with name of field included
+DONE Change from storing strings of foreign keys to objects with _id and own:true (of added directly to this entity, and is not union from another place)
+DONE Fix resolveJoins based on issue number 31
+DONE Test update with unionIn across deep paths
 TEST UPDATE
 PASS - If no field has changed in source entity, do not flush it
 
