@@ -1,3 +1,9 @@
 
 [title]
 type = 'String'
+multiLingual = false
+
+[description]
+type = 'String'
+multiLingual = true 
+
