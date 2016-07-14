@@ -19,7 +19,7 @@ Test case coverage being done
     },
     lang: 'english'
   })
-  .then(function(res) {
+  .then((res) => {
     console.log(2, 'get', res)
   })
   .catch(console.log)**/
@@ -34,7 +34,8 @@ Test case coverage being done
 
 'search video where {event.venue.name is *X AND speakers.person.name is *Y}'
 **/
-
+'use strict'
+const _ = require('lodash')
 
 var EpicSearch = require('./index')
 var es = new EpicSearch('/home/master/work/code/epicsearch/newConfig')
@@ -42,7 +43,7 @@ var es = new EpicSearch('/home/master/work/code/epicsearch/newConfig')
 //'search speakers where person.name = *text'
 //const assignments = ['x is 2', 'x is 4 if *x is 2 ? Else 1', 'x is 1 if *x is 42 ? Else is 2']
 const assignments = ['k is {d: "*x", *x: 4} if *x is empty. Else 22' ]
-const get = ['get event 1']
+const get = ['get event 1', 'get session 1', 'get speaker 1']
 const isEqual = ['2 is 4?', '2 is 2?', '*x is 2?', '*x is 2 strict?']
 
 const isEmpty = ['*x is not empty']
@@ -54,7 +55,8 @@ const searchWithJoin = ['search test where {_id: 1} as test with fields a, b. Jo
 const memUpdate = ['addToSet 1 at *y.arr']
 const memUpdateNew = ['push 3 at *y.arr']
 
-const link = ['link *session with *speaker as speakers']
+const link = ['link *speaker with *english as primaryLanguages']
+const link2 = ['link *session with *speaker as speakers']
 
 const asyncEachThenGet = [
   'async each *arr as i',
@@ -63,7 +65,7 @@ const asyncEachThenGet = [
     ]
 ]
 
-const index = ['index *session', 'index *speaker', 'index *hindi', 'index *english', 'index *event']
+const index = ['index *event', 'index *session', 'index *speaker', 'index *hindi', 'index *english']
 
 const ctx = {
   x: [7],
@@ -72,18 +74,38 @@ const ctx = {
   a: {_type: 'a', _id: '12'},
   b: {_type: 'b', _id: '1'},
   m: {_type: 'a', _source: {}, _id: '2'},
-  event: {_id: 1, _type: 'event', _source: {}},
-  session: {_id: 1, _type: 'session', _source: {}},
-  hindi: {_id: 1, _type: 'language', _source: {name: 'hindi'}},
-  english: {_id: 2, _type: 'language', _source: {name: 'english'}},
-  speaker: {_id: 1, _type: 'speaker', _source: {
-    primaryLanguages: [{_id: 1}]}
-  }
+  event: { _type: 'event', _source: {}},
+  session: { _type: 'session', _source: {}},
+  hindi: {_id: '1', _type: 'language', _source: {name: 'hindi'}},
+  english: {_id: '2', _type: 'language', _source: {name: 'english'}},
+  speaker: {_id: '1', _type: 'speaker', _source: {
+    primaryLanguages: [{_id: '1'}],
+    sessions: [{_id: '1'}]
+  }}
 }
-
-es.dsl.execute(index, ctx)
-.then(function(res) {
-  console.log( ctx.event, ctx.event2)
+const execute = es.dsl.execute.bind(es.dsl)
+execute('index *event', ctx)
+.then((res) => {
+  return execute('get event ' + res._id + ' as event', ctx)
+  .then((event) => {console.log('event before linking with session', event)})
+})
+.then((res) => {
+  return execute('index *session', ctx)
+  .then((res) => {
+    return execute('get session ' + res._id + ' as session', ctx)
+    .then((session) => {console.log('session before linking with event', session, res)})
+  })
+})
+.then((res) => {
+  return execute('link *session with *event as event', ctx)
+  .then((res) => {
+    return execute('get session *session._id as session', ctx)
+    .then((session) => {console.log('session after linking with event', session)})
+  })
+  .then((res) => {
+    return execute('get event *event._id as event', ctx)
+    .then((event) => {console.log('event after linking with session', event)})
+  })
 })
 .catch(console.log)
 
@@ -116,8 +138,6 @@ Ayush - Support for multi lingual field in field def
 
 Test update with join across deep paths
 Ashu = Add cache to dsl
-
-
 
 
 
@@ -160,6 +180,11 @@ Should work without language
 Should also take index along with type
 Versioning and locking for transactions
 
+
+TEST for deep update/link/create
+
+Create event with session and session with event
+On index event should have primaryLanguage set from session.speakers.primaryLanguages
  *
  *
  */
