@@ -156,7 +156,9 @@ var testInstructions = [ //Get and search retrieve entity object(s) from in memo
  *THINGS TO DO
 Ayush - Support for multi depth join at storage level (denormalization)
 Ayush - Support for multi lingual field in field def
-
+AYush - Unlink flow (Removes joins and recalculates dependencies of newly disconnected left subgraphs)
+Ayush - On update of a linked field, reflect it in the left subgraph
+Ayush - Implement the new link through unionIn from rightNode to leftNodes (instead of current, left nodes get unionFrom right nodes)
 Test update with join across deep paths
 Ashu = Add cache to dsl
 

@@ -1,8 +1,9 @@
 [event]
-  session{title, xxx}
-  primaryLanguages{name}
-  session.speakers.person{name}
+  sessions{title, xxx}
+  sessions.speakers.person{name}
+  sessions.video.speakers.person{name}
   speakers.primaryLanguages{name}
+  primaryLanguages{name}
   
 [video]
   events{title}
