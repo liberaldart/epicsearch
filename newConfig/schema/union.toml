@@ -6,3 +6,7 @@ primaryLanguages = '+sessions.speakers.primaryLanguages'
 
 [session]
 speakers = '+video.speakers'
+
+
+[speaker]
+primaryLanguages = '+sessions.primaryLanguages'

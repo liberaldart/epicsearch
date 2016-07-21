@@ -1,14 +1,14 @@
 [batchSizes]
-  msearch = 2
+  msearch = 20
   index = 20
-  mget = 2
-  get = 2
-  search = 1
+  mget = 20
+  get = 20
+  search = 20
   bulk = 20
 [timeouts]
-  index = 100
-  get = 100
-  bulk = 2000
-  mget = 1000
-  msearch = 1000
-  search = 1000
+  index = 10
+  get = 10
+  bulk = 10
+  mget = 10
+  msearch = 10
+  search = 10

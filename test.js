@@ -82,31 +82,19 @@ const ctx = {
 }
 const execute = es.dsl.execute.bind(es.dsl)
 
-execute(['index *speaker', 'index *hindi', 'index *english', 'index *event'], ctx)//Create event
-.then((res) => {
-  return execute('get event ' + res._id + ' as event', ctx)
-  .then((event) => {console.log('event before linking with session', JSON.stringify(event))})
-})
-.then((res) => {//Create session
-  return execute('index *session', ctx)
-  .then((res) => {
-    return execute('get session ' + res._id + ' as session', ctx)
-    .then((session) => {console.log('session before linking with event', session)})
-  })
-})
+execute(['index *speaker', 'index *hindi', 'index *english', 'index *event', 'index *session'], ctx)//Create event
 .then((res) => {//LINK event with session
   return execute('link *session with *event as event', ctx)
-  .then((res) => {
+  /**.then((res) => {
     return execute('get session *session._id as session', ctx)
     .then((session) => {console.log('session after linking with event', session)})
   })
   .then((res) => {
     return execute('get event *event._id as event', ctx)
     .then((event) => {console.log('event after linking with session', JSON.stringify(event))})
-  })
+  })**/
 })
 .then(() => {//Link speakers with session. 
-  console.log('linking speaker with session')
   return execute('link *speaker with *session as sessions', ctx)
   .then((res) => {
     return execute('get event *event._id as event', ctx)
@@ -116,27 +104,30 @@ execute(['index *speaker', 'index *hindi', 'index *english', 'index *event'], ct
 .then(() => {//Link speakers with a language. SHould add language to the event
   return execute('link *speaker with *english as primaryLanguages', ctx)
   .then((res) => {
-    return execute('get event *event._id as event', ctx)
-    .then((event) => {console.log('event after linking speaker with english', JSON.stringify(event))})
+    return execute(['get event *event._id as event', 'get speaker *speaker._id as speaker'], ctx)
+    .then((event) => {
+      console.log('speaker after linking speaker with english', JSON.stringify(ctx.speaker))
+      console.log('event after linking speaker with english', event._source)
+    })
   })
 })
 .then(() => {//Link speakers with a language
-  return execute('link *speaker with *hindi as primaryLanguages', ctx)
+  return execute('link *session with *hindi as primaryLanguages', ctx)
   .then((res) => {
 
-    return execute(['get speaker *speaker._id as speaker', 'get event *event._id as event'], ctx)
+    return execute(['get session *session._id as session', 'get speaker *speaker._id as speaker', 'get event *event._id as event'], ctx)
     .then((event) => {
-      console.log('event after linking speaker with hindi', JSON.stringify(event))
+      console.log('event after linking session with hindi', JSON.stringify(event))
+      console.log('speaker after linking session with hindi', JSON.stringify(ctx.speaker))
+      console.log('session after linking session with hindi', JSON.stringify(ctx.session))
     })
   })
 })
 .then(() => {
-  ctx.speaker._source.primaryLanguages = []
   return execute(['unset *speaker.primaryLanguages Do deep update.'], ctx)
   .then((res) => {
     return execute('get event *event._id as event', ctx)
     .then((event) => {
-      console.log('speaker', ctx.speaker)
       console.log('event after unlinking speaker with languages', JSON.stringify(event))})
   })
 })
