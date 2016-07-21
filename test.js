@@ -95,7 +95,6 @@ execute(['index *speaker', 'index *hindi', 'index *english', 'index *event'], ct
   })
 })
 .then((res) => {//LINK event with session
-  console.log(ctx.session, ctx.event)
   return execute('link *session with *event as event', ctx)
   .then((res) => {
     return execute('get session *session._id as session', ctx)
@@ -114,7 +113,7 @@ execute(['index *speaker', 'index *hindi', 'index *english', 'index *event'], ct
     .then((event) => {console.log('event after linking speaker with session', JSON.stringify(event))})
   })
 })
-/**.then(() => {//Link speakers with a language. SHould add language to the event
+.then(() => {//Link speakers with a language. SHould add language to the event
   return execute('link *speaker with *english as primaryLanguages', ctx)
   .then((res) => {
     return execute('get event *event._id as event', ctx)
@@ -124,10 +123,23 @@ execute(['index *speaker', 'index *hindi', 'index *english', 'index *event'], ct
 .then(() => {//Link speakers with a language
   return execute('link *speaker with *hindi as primaryLanguages', ctx)
   .then((res) => {
-    return execute('get event *event._id as event', ctx)
-    .then((event) => {console.log('event after linking speaker with hindi', JSON.stringify(event))})
+
+    return execute(['get speaker *speaker._id as speaker', 'get event *event._id as event'], ctx)
+    .then((event) => {
+      console.log('event after linking speaker with hindi', JSON.stringify(event))
+    })
   })
-})**/
+})
+.then(() => {
+  ctx.speaker._source.primaryLanguages = []
+  return execute(['unset *speaker.primaryLanguages Do deep update.'], ctx)
+  .then((res) => {
+    return execute('get event *event._id as event', ctx)
+    .then((event) => {
+      console.log('speaker', ctx.speaker)
+      console.log('event after unlinking speaker with languages', JSON.stringify(event))})
+  })
+})
 .catch(console.log)
 
 var testInstructions = [ //Get and search retrieve entity object(s) from in memory cache which in turn is flled from ES as each respective query happens for first time. These are mutable objects. The idea is to let them go through a process of multiple mutations in memory during the migration process. Once the old tables are processed, (only) the dirty entities in cache are flushed to ES.
