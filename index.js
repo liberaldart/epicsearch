@@ -17,6 +17,7 @@ const deepFunctions = {
     get: 'get',
     search: 'search',
     link: 'link',
+    unlink: 'unlink',
     update: 'update'
   }
 
