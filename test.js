@@ -75,7 +75,7 @@ const ctx = {
   b: {_type: 'b', _id: '1'},
   m: {_type: 'a', _source: {}, _id: '2'},
   event: { _type: 'event', _source: {}},
-  session: { _type: 'session', _source: {}},
+  session: { _type: 'session', _source: {title: 'sess1'}},
   hindi: {_id: '1', _type: 'language', _source: {name: 'hindi'}},
   english: {_id: '2', _type: 'language', _source: {name: 'english'}},
   speaker: {_id: '1', _type: 'speaker', _source: {}}
@@ -85,16 +85,16 @@ const execute = es.dsl.execute.bind(es.dsl)
 execute(['index *speaker', 'index *hindi', 'index *english', 'index *event', 'index *session'], ctx)//Create event
 .then((res) => {//LINK event with session
   return execute('link *session with *event as event', ctx)
-  /**.then((res) => {
+  .then((res) => {
     return execute('get session *session._id as session', ctx)
     .then((session) => {console.log('session after linking with event', session)})
   })
   .then((res) => {
     return execute('get event *event._id as event', ctx)
     .then((event) => {console.log('event after linking with session', JSON.stringify(event))})
-  })**/
+  })
 })
-.then(() => {//Link speakers with session. 
+/**.then(() => {//Link speakers with session. 
   return execute('link *speaker with *session as sessions', ctx)
   .then((res) => {
 
@@ -129,13 +129,27 @@ execute(['index *speaker', 'index *hindi', 'index *english', 'index *event', 'in
   })
 })
 .then(() => {
-  return execute(['unset *speaker.primaryLanguages Do deep update.'], ctx)
+  return execute(['unlink *speaker with *english as primaryLanguages'], ctx)
   .then((res) => {
-    return execute('get event *event._id as event', ctx)
+    return execute(['get session *session._id as session', 'get speaker *speaker._id as speaker', 'get event *event._id as event'], ctx)
     .then((event) => {
-      console.log('event after unlinking speaker with languages', JSON.stringify(event))})
+      console.log('event after unlinking speaker with english', JSON.stringify(event))
+      console.log('speaker after unlinking speaker with english', JSON.stringify(ctx.speaker))
+      console.log('session after unlinking speaker with english', JSON.stringify(ctx.session))
+    })
   })
 })
+.then(() => {
+  return execute(['unlink *session with *hindi as primaryLanguages'], ctx)
+  .then((res) => {
+    return execute(['get session *session._id as session', 'get speaker *speaker._id as speaker', 'get event *event._id as event'], ctx)
+    .then((event) => {
+      console.log('event after unlinking session with hindi', JSON.stringify(event))
+      console.log('speaker after unlinking session with hindi', JSON.stringify(ctx.speaker))
+      console.log('session after unlinking session with hindi', JSON.stringify(ctx.session))
+    })
+  })
+})**/
 .catch(console.log)
 
 var testInstructions = [ //Get and search retrieve entity object(s) from in memory cache which in turn is flled from ES as each respective query happens for first time. These are mutable objects. The idea is to let them go through a process of multiple mutations in memory during the migration process. Once the old tables are processed, (only) the dirty entities in cache are flushed to ES.
