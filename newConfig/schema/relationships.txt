@@ -11,8 +11,10 @@ sessions <> speakers
 primaryLanguages <> speakers
   [speaker] <> [language]
 
-primaryLanguages
+primaryLanguages <> sessions
   [session] <> [language]
+
+primaryLanguages <> events
   [event] <> [language]
 
 sessions <> video
