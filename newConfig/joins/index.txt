@@ -3,7 +3,6 @@
   speakers.primaryLanguages{name}
   
 [video]
-  events{title}
   sessions{title}
   speakers.primaryLanguages{name}
 
