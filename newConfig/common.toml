@@ -1,2 +1,2 @@
 supportedLanguages = ['english', 'tibetan']
-graphTraversalDepth = 5
+graphTraversalDepth = 2 

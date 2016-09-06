@@ -20,9 +20,9 @@ Test case coverage being done
     lang: 'english'
   })
   .then((res) => {
-    console.log(2, 'get', res)
+    inspect(2, 'get', res)
   })
-  .catch(console.log)**/
+  .catch(inspect)**/
 
 /**'search person where {'name.suggest': *text} as persons. Retrieve field speakers',
 'async each persons.hits.hits as person',[
@@ -75,56 +75,141 @@ const ctx = {
   b: {_type: 'b', _id: '1'},
   m: {_type: 'a', _source: {}, _id: '2'},
   event: { _type: 'event', _source: {}},
-  session: { _type: 'session', _source: {title: 'sess1'}},
+  session: { _type: 'session', _source: {title: 'sess1', english: {description: 'descr'}}},
   hindi: {_id: '1', _type: 'language', _source: {name: 'hindi'}},
   english: {_id: '2', _type: 'language', _source: {name: 'english'}},
-  speaker: {_id: '1', _type: 'speaker', _source: {}}
+  speaker: {_id: '1', _type: 'speaker', _source: {}},
+  speaker2: {_id: '2', _type: 'speaker', _source: {}}
 }
 const execute = es.dsl.execute.bind(es.dsl)
+const inspect = function() {
+  try {
+  console.log.apply(console.log, arguments)
+  console.log('\n')
+  } catch(e) {
+    console.log(e)
+  }
+}
 
-execute(['index *speaker', 'index *hindi', 'index *english', 'index *event', 'index *session'], ctx)//Create event
-.then((res) => {//LINK event with session
+//execute(['index *event', 'index *session', 'index *speaker', 'index *speaker2', 'index *hindi', 'index *english'], ctx)//Create event
+execute(['index *session', 'index *speaker', 'index *hindi'], ctx)//Create event
+/**.then((res) => {//LINK event with session
+  inspect('about to link event with session')
   return execute('link *session with *event as event', ctx)
   .then((res) => {
     return execute('get session *session._id as session', ctx)
-    .then((session) => {console.log('session after linking with event', session)})
+    .then((session) => {inspect('session after linking with event', session)})
   })
   .then((res) => {
     return execute('get event *event._id as event', ctx)
-    .then((event) => {console.log('event after linking with session', JSON.stringify(event))})
+    .then((event) => {inspect('event after linking with session', JSON.stringify(event))})
   })
-})
-/**.then(() => {//Link speakers with session. 
-  return execute('link *speaker with *session as sessions', ctx)
-  .then((res) => {
-
-    return execute(['get session *session._id as session', 'get speaker *speaker._id as speaker', 'get event *event._id as event'], ctx)
-    .then((event) => {
-      console.log('event after linking speaker with session', JSON.stringify(event))
-      console.log('speaker after linking speaker with session', JSON.stringify(ctx.speaker))
-      console.log('session after linking speaker with session', JSON.stringify(ctx.session))
-    })
-  })
-})
-.then(() => {//Link speakers with a language. SHould add language to the event
-  return execute('link *speaker with *english as primaryLanguages', ctx)
-  .then((res) => {
-    return execute(['get event *event._id as event', 'get speaker *speaker._id as speaker'], ctx)
-    .then((event) => {
-      console.log('speaker after linking speaker with english', JSON.stringify(ctx.speaker))
-      console.log('event after linking speaker with english', JSON.stringify(ctx.event))
-    })
-  })
-})
+})**/
 .then(() => {//Link speakers with a language
   return execute('link *session with *hindi as primaryLanguages', ctx)
   .then((res) => {
 
+    return execute(['get session *session._id as session', 'get speaker *speaker._id as speaker'], ctx)
+    .then((event) => {
+      //inspect('event after linking session with hindi', JSON.stringify(ctx.event))
+      //inspect('speaker after linking session with hindi', JSON.stringify(ctx.speaker))
+      inspect('session after linking session with hindi', JSON.stringify(ctx.session))
+    })
+  })
+})
+/**.then(() => {//Link speakers with a language
+  ctx.session._source.title = 'hello'
+  return execute(['index *session'], ctx)
+  .then((res) => {
+
+    return execute(['get session *session._id as session', 'get event *event._id as event'], ctx)
+    .then((event) => {
+      inspect('event after linking changing session title to hello', JSON.stringify(ctx.event))
+      inspect('session after changing session title to hello', JSON.stringify(ctx.session))
+    })
+  })
+})**/
+/**.then(() => {//Link speakers with a language. SHould add language to the event
+  return execute(['link *speaker with *english as primaryLanguages','get speaker *speaker._id as speaker', ], ctx)
+  .then((res) => {
+    return execute(['get event *event._id as event', ], ctx)
+    .then((event) => {
+      inspect('speaker after linking speaker with english', JSON.stringify(ctx.speaker))
+      inspect('event after linking speaker with english', JSON.stringify(ctx.event))
+    })
+  })
+})**/
+.then(() => {//Link speakers with session. 
+  return execute('link *speaker with *session as sessions', ctx)
+  .then((res) => {
+
+    return execute(['get session *session._id as session', 'get speaker *speaker._id as speaker'], ctx)
+    .then((event) => {
+      //inspect('event after linking speaker with session', JSON.stringify(event))
+      inspect('speaker after linking speaker with session', JSON.stringify(ctx.speaker))
+      inspect('session after linking speaker with session', JSON.stringify(ctx.session))
+    })
+  })
+})
+/**.then(() => {
+  ctx.english._source.name = 'Hingligh'
+  return execute(['index *english'], ctx)
+  .then((res) => {
+
     return execute(['get session *session._id as session', 'get speaker *speaker._id as speaker', 'get event *event._id as event'], ctx)
     .then((event) => {
-      console.log('event after linking session with hindi', JSON.stringify(event))
-      console.log('speaker after linking session with hindi', JSON.stringify(ctx.speaker))
-      console.log('session after linking session with hindi', JSON.stringify(ctx.session))
+      inspect('change neame event after linking speaker with session', JSON.stringify(event))
+      inspect('schange name peaker after linking speaker with session', JSON.stringify(ctx.speaker))
+      inspect('change name session after linking speaker with session', JSON.stringify(ctx.session))
+    })
+  })
+})
+.then(() => {
+  _.set(ctx.session._source, 'tibetan.description', 'Hingligh tibetan')
+  _.set(ctx.session._source, 'english.description', 'Hingligh english')
+  _.set(ctx.session._source, 'title', 'title new')
+  return execute(['index *session'], ctx)
+  .then((res) => {
+
+    return execute(['get session *session._id as session', 'get speaker *speaker._id as speaker', 'get event *event._id as event'], ctx)
+    .then((event) => {
+      inspect('change neame event after linking speaker with session', JSON.stringify(event))
+      inspect('schange name peaker after linking speaker with session', JSON.stringify(ctx.speaker))
+      inspect('change name session after linking speaker with session', JSON.stringify(ctx.session))
+    })
+  })
+})
+**/
+/**.then(() => {//Link speaker2 with a language. SHould add language to the event
+  return execute(['link *speaker2 with *english as primaryLanguages','get speaker *speaker2._id as speaker2', ], ctx)
+  .then((res) => {
+    return execute(['get event *event._id as event', ], ctx)
+    .then((event) => {
+      inspect('speaker2 after linking speaker2 with english', JSON.stringify(ctx.speaker2))
+      inspect('event after linking speaker2 with english', JSON.stringify(ctx.event))
+    })
+  })
+})
+.then(() => {//Link speaker2 with a language. SHould add language to the event
+  return execute(['link *speaker2 with *session as sessions','get speaker *speaker2._id as speaker2', ], ctx)
+  .then((res) => {
+    return execute(['get event *event._id as event', ], ctx)
+    .then((event) => {
+      inspect('speaker2 after linking speaker2 with session', JSON.stringify(ctx.speaker2))
+      inspect('event after linking speaker2 with session', JSON.stringify(ctx.event))
+    })
+  })
+})**/
+//'link *speaker2 with *english as primaryLanguages', 'get speaker *speaker2._id as speaker2', 'link *speaker2 with *session as sessions','get speaker *speaker2._id as speaker2'],
+/**.then(() => {//Link speakers with a language
+  //return execute('link *session with *hindi as primaryLanguages', ctx)
+  return execute('session.title is primaryLanguages. Do deep update', ctx)
+  .then((res) => {
+
+    return execute(['get session *session._id as session', 'get event *event._id as event'], ctx)
+    .then((event) => {
+      inspect('event after changing title of session', JSON.stringify(event))
+      inspect('session after changing title of session', JSON.stringify(ctx.session))
     })
   })
 })
@@ -133,9 +218,9 @@ execute(['index *speaker', 'index *hindi', 'index *english', 'index *event', 'in
   .then((res) => {
     return execute(['get session *session._id as session', 'get speaker *speaker._id as speaker', 'get event *event._id as event'], ctx)
     .then((event) => {
-      console.log('event after unlinking speaker with english', JSON.stringify(event))
-      console.log('speaker after unlinking speaker with english', JSON.stringify(ctx.speaker))
-      console.log('session after unlinking speaker with english', JSON.stringify(ctx.session))
+      inspect('event after unlinking speaker with english', JSON.stringify(event))
+      inspect('speaker after unlinking speaker with english', JSON.stringify(ctx.speaker))
+      inspect('session after unlinking speaker with english', JSON.stringify(ctx.session))
     })
   })
 })
@@ -144,13 +229,24 @@ execute(['index *speaker', 'index *hindi', 'index *english', 'index *event', 'in
   .then((res) => {
     return execute(['get session *session._id as session', 'get speaker *speaker._id as speaker', 'get event *event._id as event'], ctx)
     .then((event) => {
-      console.log('event after unlinking session with hindi', JSON.stringify(event))
-      console.log('speaker after unlinking session with hindi', JSON.stringify(ctx.speaker))
-      console.log('session after unlinking session with hindi', JSON.stringify(ctx.session))
+      inspect('event after unlinking session with hindi', JSON.stringify(event))
+      inspect('speaker after unlinking session with hindi', JSON.stringify(ctx.speaker))
+      inspect('session after unlinking session with hindi', JSON.stringify(ctx.session))
     })
   })
 })**/
-.catch(console.log)
+.catch((err) => inspect(JSON.stringify(err), err.stack))
+
+
+const testTraverser = () => {
+  const Cache = require('./lib/cache')
+  const cache = new Cache(es)
+  return require('./lib/deep/graph/traverser').traverseFromNode(cache, ctx.speaker, 2, ['primaryLangauges', '1'], (params) => {
+    inspect(_.omit(params, 'cache', 'node'))
+    return require('q')()
+  }) 
+  .then(() => inspect('done'))
+}
 
 var testInstructions = [ //Get and search retrieve entity object(s) from in memory cache which in turn is flled from ES as each respective query happens for first time. These are mutable objects. The idea is to let them go through a process of multiple mutations in memory during the migration process. Once the old tables are processed, (only) the dirty entities in cache are flushed to ES.
   'get event *content.eventId',

@@ -7,3 +7,6 @@ multiLingual = false
 type = 'String'
 multiLingual = true 
 
+[names]
+type = ['String']
+multiLingual = true

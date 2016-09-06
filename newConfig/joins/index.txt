@@ -1,10 +1,3 @@
 [event]
   sessions{title, description}
   speakers.primaryLanguages{name}
-  
-[video]
-  sessions{title}
-  speakers.primaryLanguages{name}
-
-[speaker]
-  primaryLanguages{name}
