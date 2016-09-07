@@ -91,33 +91,25 @@ const inspect = function() {
   }
 }
 
-//execute(['index *event', 'index *session', 'index *speaker', 'index *speaker2', 'index *hindi', 'index *english'], ctx)//Create event
-execute(['index *session', 'index *speaker', 'index *hindi'], ctx)//Create event
-/**.then((res) => {//LINK event with session
+execute(['index *event', 'index *session', 'index *speaker', 'index *speaker2', 'index *hindi', 'index *english'], ctx)//Create event
+.then((res) => {//LINK event with session
   inspect('about to link event with session')
   return execute('link *session with *event as event', ctx)
   .then((res) => {
-    return execute('get session *session._id as session', ctx)
-    .then((session) => {inspect('session after linking with event', session)})
+    inspect('linked session with event')
   })
-  .then((res) => {
-    return execute('get event *event._id as event', ctx)
-    .then((event) => {inspect('event after linking with session', JSON.stringify(event))})
-  })
-})**/
+})
 .then(() => {//Link speakers with a language
   return execute('link *session with *hindi as primaryLanguages', ctx)
   .then((res) => {
 
     return execute(['get session *session._id as session', 'get speaker *speaker._id as speaker'], ctx)
     .then((event) => {
-      //inspect('event after linking session with hindi', JSON.stringify(ctx.event))
-      //inspect('speaker after linking session with hindi', JSON.stringify(ctx.speaker))
       inspect('session after linking session with hindi', JSON.stringify(ctx.session))
     })
   })
 })
-/**.then(() => {//Link speakers with a language
+.then(() => {//Link speakers with a language
   ctx.session._source.title = 'hello'
   return execute(['index *session'], ctx)
   .then((res) => {
@@ -128,8 +120,8 @@ execute(['index *session', 'index *speaker', 'index *hindi'], ctx)//Create event
       inspect('session after changing session title to hello', JSON.stringify(ctx.session))
     })
   })
-})**/
-/**.then(() => {//Link speakers with a language. SHould add language to the event
+})
+.then(() => {//Link speakers with a language. SHould add language to the event
   return execute(['link *speaker with *english as primaryLanguages','get speaker *speaker._id as speaker', ], ctx)
   .then((res) => {
     return execute(['get event *event._id as event', ], ctx)
@@ -138,7 +130,7 @@ execute(['index *session', 'index *speaker', 'index *hindi'], ctx)//Create event
       inspect('event after linking speaker with english', JSON.stringify(ctx.event))
     })
   })
-})**/
+})
 .then(() => {//Link speakers with session. 
   return execute('link *speaker with *session as sessions', ctx)
   .then((res) => {
@@ -151,7 +143,7 @@ execute(['index *session', 'index *speaker', 'index *hindi'], ctx)//Create event
     })
   })
 })
-/**.then(() => {
+.then(() => {
   ctx.english._source.name = 'Hingligh'
   return execute(['index *english'], ctx)
   .then((res) => {
@@ -179,7 +171,7 @@ execute(['index *session', 'index *speaker', 'index *hindi'], ctx)//Create event
     })
   })
 })
-**/
+
 /**.then(() => {//Link speaker2 with a language. SHould add language to the event
   return execute(['link *speaker2 with *english as primaryLanguages','get speaker *speaker2._id as speaker2', ], ctx)
   .then((res) => {
