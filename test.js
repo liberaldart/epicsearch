@@ -38,7 +38,7 @@ Test case coverage being done
 const _ = require('lodash')
 
 var EpicSearch = require('./index')
-var es = new EpicSearch('/home/master/work/code/epicsearch/newConfig')
+var es = new EpicSearch('/home/amazing/work/epicsearch/newConfig')
 
 //'search speakers where person.name = *text'
 //const assignments = ['x is 2', 'x is 4 if *x is 2 ? Else 1', 'x is 1 if *x is 42 ? Else is 2']
