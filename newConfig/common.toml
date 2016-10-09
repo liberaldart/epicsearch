@@ -1,2 +1,3 @@
 supportedLanguages = ['english', 'tibetan']
 graphTraversalDepth = 2 
+pathTypes = ['joinFrom', 'unionIn', 'unionFrom']

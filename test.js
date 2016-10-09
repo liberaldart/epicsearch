@@ -38,7 +38,7 @@ Test case coverage being done
 const _ = require('lodash')
 
 var EpicSearch = require('./index')
-var es = new EpicSearch('/home/master/work/code/epicsearch/newConfig')
+var es = new EpicSearch(process.argv[2])
 
 //'search speakers where person.name = *text'
 //const assignments = ['x is 2', 'x is 4 if *x is 2 ? Else 1', 'x is 1 if *x is 42 ? Else is 2']
@@ -99,7 +99,7 @@ execute(['index *event', 'index *session', 'index *speaker', 'index *speaker2', 
     inspect('linked session with event')
   })
 })
-.then(() => {//Link speakers with a language
+.then(() => {//Link session with a language
   return execute('link *session with *hindi as primaryLanguages', ctx)
   .then((res) => {
 
@@ -109,8 +109,8 @@ execute(['index *event', 'index *session', 'index *speaker', 'index *speaker2', 
     })
   })
 })
-.then(() => {//Link speakers with a language
-  ctx.session._source.title = 'hello'
+/**.then(() => {//Link speakers with a language
+  ctx.session._source.title = 'old session title'
   return execute(['index *session'], ctx)
   .then((res) => {
 
@@ -120,57 +120,57 @@ execute(['index *event', 'index *session', 'index *speaker', 'index *speaker2', 
       inspect('session after changing session title to hello', JSON.stringify(ctx.session))
     })
   })
-})
-.then(() => {//Link speakers with a language. SHould add language to the event
-  return execute(['link *speaker with *english as primaryLanguages','get speaker *speaker._id as speaker', ], ctx)
-  .then((res) => {
-    return execute(['get event *event._id as event', ], ctx)
-    .then((event) => {
-      inspect('speaker after linking speaker with english', JSON.stringify(ctx.speaker))
-      inspect('event after linking speaker with english', JSON.stringify(ctx.event))
-    })
-  })
-})
+})**/
 .then(() => {//Link speakers with session. 
   return execute('link *speaker with *session as sessions', ctx)
   .then((res) => {
 
-    return execute(['get session *session._id as session', 'get speaker *speaker._id as speaker'], ctx)
+    return execute(['get session *session._id as session', 'get speaker *speaker._id as speaker', 'get event *event._id as event'], ctx)
     .then((event) => {
-      //inspect('event after linking speaker with session', JSON.stringify(event))
+      inspect('event after linking speaker with session', JSON.stringify(event))
       inspect('speaker after linking speaker with session', JSON.stringify(ctx.speaker))
       inspect('session after linking speaker with session', JSON.stringify(ctx.session))
     })
   })
 })
-.then(() => {
-  ctx.english._source.name = 'Hingligh'
+.then(() => {//Link speakers with a language. SHould add language to the event
+  return execute(['link *speaker with *english as primaryLanguages'], ctx)
+  .then((res) => {
+    return execute(['get event *event._id as event', 'get speaker *speaker._id as speaker'], ctx)
+    .then((event) => {
+      inspect('speaker after linking speaker with english', JSON.stringify(ctx.speaker))
+      inspect('event after linking speaker with english', JSON.stringify(event))
+    })
+  })
+})
+/**.then(() => {
+  ctx.english._source.name = 'Updated english name'
   return execute(['index *english'], ctx)
   .then((res) => {
 
     return execute(['get session *session._id as session', 'get speaker *speaker._id as speaker', 'get event *event._id as event'], ctx)
     .then((event) => {
-      inspect('change neame event after linking speaker with session', JSON.stringify(event))
-      inspect('schange name peaker after linking speaker with session', JSON.stringify(ctx.speaker))
-      inspect('change name session after linking speaker with session', JSON.stringify(ctx.session))
+      inspect('change name of english language. event', JSON.stringify(event))
+      inspect('change name of english language. speaker', JSON.stringify(ctx.speaker))
+      inspect('change name of english language. session', JSON.stringify(ctx.session))
     })
   })
 })
 .then(() => {
-  _.set(ctx.session._source, 'tibetan.description', 'Hingligh tibetan')
-  _.set(ctx.session._source, 'english.description', 'Hingligh english')
+  _.set(ctx.session._source, 'tibetan.description', 'New description tibetan')
+  _.set(ctx.session._source, 'english.description', 'New description')
   _.set(ctx.session._source, 'title', 'title new')
   return execute(['index *session'], ctx)
   .then((res) => {
 
     return execute(['get session *session._id as session', 'get speaker *speaker._id as speaker', 'get event *event._id as event'], ctx)
     .then((event) => {
-      inspect('change neame event after linking speaker with session', JSON.stringify(event))
-      inspect('schange name peaker after linking speaker with session', JSON.stringify(ctx.speaker))
-      inspect('change name session after linking speaker with session', JSON.stringify(ctx.session))
+      inspect('Change session title and description. event', JSON.stringify(event))
+      inspect('Change session title and description. speaker', JSON.stringify(JSON.stringify(ctx.speaker)))
+      inspect('Change session title and description. session', JSON.stringify(JSON.stringify(ctx.session)))
     })
   })
-})
+})**/
 
 /**.then(() => {//Link speaker2 with a language. SHould add language to the event
   return execute(['link *speaker2 with *english as primaryLanguages','get speaker *speaker2._id as speaker2', ], ctx)
