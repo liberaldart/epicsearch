@@ -27,6 +27,7 @@ const EpicSearch = function(configFolderPath) {
   this.es = new elasticsearch.Client(_.clone(config.elasticsearch))
 
   this.es.config = config
+  this.es.Cache = require('./lib/cache')
 
   addDslFeature(this.es)
   addCollectFeature(this.es)
