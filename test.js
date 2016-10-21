@@ -98,20 +98,20 @@ execute(['index *event', 'index *session', 'index *speaker', 'index *speaker2', 
   .then((res) => {
 
     return execute(['get session *session._id as session', 'get speaker *speaker._id as speaker'], ctx)
-    .then((event) => {
-      inspect('session after linking session with hindi', JSON.stringify(ctx.session))
+    .then(() => {
+      inspect('session after linking session with hindi', JSON.stringify(ctx.data.session))
     })
   })
 })
 /**.then(() => {//Link speakers with a language
-  ctx.session._source.title = 'old session title'
+  ctx.data.session._source.title = 'old session title'
   return execute(['index *session'], ctx)
   .then((res) => {
 
     return execute(['get session *session._id as session', 'get event *event._id as event'], ctx)
     .then((event) => {
-      inspect('event after linking changing session title to hello', JSON.stringify(ctx.event))
-      inspect('session after changing session title to hello', JSON.stringify(ctx.session))
+      inspect('event after linking changing session title to hello', JSON.stringify(ctx.data.event))
+      inspect('session after changing session title to hello', JSON.stringify(ctx.data.session))
     })
   })
 })**/
@@ -121,9 +121,9 @@ execute(['index *event', 'index *session', 'index *speaker', 'index *speaker2', 
 
     return execute(['get session *session._id as session', 'get speaker *speaker._id as speaker', 'get event *event._id as event'], ctx)
     .then((event) => {
-      inspect('event after linking speaker with session', JSON.stringify(event))
-      inspect('speaker after linking speaker with session', JSON.stringify(ctx.speaker))
-      inspect('session after linking speaker with session', JSON.stringify(ctx.session))
+      inspect('event after linking speaker with session', JSON.stringify(ctx.data.event))
+      inspect('speaker after linking speaker with session', JSON.stringify(ctx.data.speaker))
+      inspect('session after linking speaker with session', JSON.stringify(ctx.data.session))
     })
   })
 })
@@ -131,37 +131,37 @@ execute(['index *event', 'index *session', 'index *speaker', 'index *speaker2', 
   return execute(['link *speaker with *english as primaryLanguages'], ctx)
   .then((res) => {
     return execute(['get event *event._id as event', 'get speaker *speaker._id as speaker'], ctx)
-    .then((event) => {
-      inspect('speaker after linking speaker with english', JSON.stringify(ctx.speaker))
-      inspect('event after linking speaker with english', JSON.stringify(event))
+    .then(() => {
+      inspect('speaker after linking speaker with english', ctx)
+      inspect('event after linking speaker with english', JSON.stringify(ctx.data.event))
     })
   })
 })
 /**.then(() => {
-  ctx.english._source.name = 'Updated english name'
+  ctx.data.english._source.name = 'Updated english name'
   return execute(['index *english'], ctx)
   .then((res) => {
 
     return execute(['get session *session._id as session', 'get speaker *speaker._id as speaker', 'get event *event._id as event'], ctx)
     .then((event) => {
       inspect('change name of english language. event', JSON.stringify(event))
-      inspect('change name of english language. speaker', JSON.stringify(ctx.speaker))
-      inspect('change name of english language. session', JSON.stringify(ctx.session))
+      inspect('change name of english language. speaker', JSON.stringify(ctx.data.speaker))
+      inspect('change name of english language. session', JSON.stringify(ctx.data.session))
     })
   })
 })
 .then(() => {
-  _.set(ctx.session._source, 'tibetan.description', 'New description tibetan')
-  _.set(ctx.session._source, 'english.description', 'New description')
-  _.set(ctx.session._source, 'title', 'title new')
+  _.set(ctx.data.session._source, 'tibetan.description', 'New description tibetan')
+  _.set(ctx.data.session._source, 'english.description', 'New description')
+  _.set(ctx.data.session._source, 'title', 'title new')
   return execute(['index *session'], ctx)
   .then((res) => {
 
     return execute(['get session *session._id as session', 'get speaker *speaker._id as speaker', 'get event *event._id as event'], ctx)
     .then((event) => {
       inspect('Change session title and description. event', JSON.stringify(event))
-      inspect('Change session title and description. speaker', JSON.stringify(JSON.stringify(ctx.speaker)))
-      inspect('Change session title and description. session', JSON.stringify(JSON.stringify(ctx.session)))
+      inspect('Change session title and description. speaker', JSON.stringify(JSON.stringify(ctx.data.speaker)))
+      inspect('Change session title and description. session', JSON.stringify(JSON.stringify(ctx.data.session)))
     })
   })
 })**/
@@ -171,8 +171,8 @@ execute(['index *event', 'index *session', 'index *speaker', 'index *speaker2', 
   .then((res) => {
     return execute(['get event *event._id as event', ], ctx)
     .then((event) => {
-      inspect('speaker2 after linking speaker2 with english', JSON.stringify(ctx.speaker2))
-      inspect('event after linking speaker2 with english', JSON.stringify(ctx.event))
+      inspect('speaker2 after linking speaker2 with english', JSON.stringify(ctx.data.speaker2))
+      inspect('event after linking speaker2 with english', JSON.stringify(ctx.data.event))
     })
   })
 })
@@ -181,8 +181,8 @@ execute(['index *event', 'index *session', 'index *speaker', 'index *speaker2', 
   .then((res) => {
     return execute(['get event *event._id as event', ], ctx)
     .then((event) => {
-      inspect('speaker2 after linking speaker2 with session', JSON.stringify(ctx.speaker2))
-      inspect('event after linking speaker2 with session', JSON.stringify(ctx.event))
+      inspect('speaker2 after linking speaker2 with session', JSON.stringify(ctx.data.speaker2))
+      inspect('event after linking speaker2 with session', JSON.stringify(ctx.data.event))
     })
   })
 })**/
@@ -195,7 +195,7 @@ execute(['index *event', 'index *session', 'index *speaker', 'index *speaker2', 
     return execute(['get session *session._id as session', 'get event *event._id as event'], ctx)
     .then((event) => {
       inspect('event after changing title of session', JSON.stringify(event))
-      inspect('session after changing title of session', JSON.stringify(ctx.session))
+      inspect('session after changing title of session', JSON.stringify(ctx.data.session))
     })
   })
 })
@@ -205,8 +205,8 @@ execute(['index *event', 'index *session', 'index *speaker', 'index *speaker2', 
     return execute(['get session *session._id as session', 'get speaker *speaker._id as speaker', 'get event *event._id as event'], ctx)
     .then((event) => {
       inspect('event after unlinking speaker with english', JSON.stringify(event))
-      inspect('speaker after unlinking speaker with english', JSON.stringify(ctx.speaker))
-      inspect('session after unlinking speaker with english', JSON.stringify(ctx.session))
+      inspect('speaker after unlinking speaker with english', JSON.stringify(ctx.data.speaker))
+      inspect('session after unlinking speaker with english', JSON.stringify(ctx.data.session))
     })
   })
 })
@@ -216,8 +216,8 @@ execute(['index *event', 'index *session', 'index *speaker', 'index *speaker2', 
     return execute(['get session *session._id as session', 'get speaker *speaker._id as speaker', 'get event *event._id as event'], ctx)
     .then((event) => {
       inspect('event after unlinking session with hindi', JSON.stringify(event))
-      inspect('speaker after unlinking session with hindi', JSON.stringify(ctx.speaker))
-      inspect('session after unlinking session with hindi', JSON.stringify(ctx.session))
+      inspect('speaker after unlinking session with hindi', JSON.stringify(ctx.data.speaker))
+      inspect('session after unlinking session with hindi', JSON.stringify(ctx.data.session))
     })
   })
 })**/
@@ -227,7 +227,7 @@ execute(['index *event', 'index *session', 'index *speaker', 'index *speaker2', 
 const testTraverser = () => {
   const Cache = require('./lib/cache')
   const cache = new Cache(es)
-  return require('./lib/deep/graph/traverser').traverseFromNode(cache, ctx.speaker, 2, ['primaryLangauges', '1'], (params) => {
+  return require('./lib/deep/graph/traverser').traverseFromNode(cache, ctx.data.speaker, 2, ['primaryLangauges', '1'], (params) => {
     inspect(_.omit(params, 'cache', 'node'))
     return require('q')()
   }) 
