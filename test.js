@@ -67,20 +67,6 @@ const asyncEachThenGet = [
 
 const index = ['index *event', 'index *session', 'index *speaker', 'index *hindi', 'index *english']
 
-const ctx = {
-  x: [7],
-  y: {arr: [1,2]},
-  arr: [1, 2],
-  a: {_type: 'a', _id: '12'},
-  b: {_type: 'b', _id: '1'},
-  m: {_type: 'a', _source: {}, _id: '2'},
-  event: { _type: 'event', _source: {}},
-  session: { _type: 'session', _source: {title: 'sess1', english: {description: 'descr'}}},
-  hindi: {_id: '1', _type: 'language', _source: {name: 'hindi'}},
-  english: {_id: '2', _type: 'language', _source: {name: 'english'}},
-  speaker: {_id: '1', _type: 'speaker', _source: {}},
-  speaker2: {_id: '2', _type: 'speaker', _source: {}}
-}
 const execute = es.dsl.execute.bind(es.dsl)
 const inspect = function() {
   try {
@@ -90,6 +76,14 @@ const inspect = function() {
     console.log(e)
   }
 }
+const ctx = new es.Cache(es, {
+  event: { _type: 'event', _source: {}},
+  session: { _type: 'session', _source: {title: 'sess1', english: {description: 'descr'}}},
+  hindi: {_id: '1', _type: 'language', _source: {name: 'hindi'}},
+  english: {_id: '2', _type: 'language', _source: {name: 'english'}},
+  speaker: {_id: '1', _type: 'speaker', _source: {}},
+  speaker2: {_id: '2', _type: 'speaker', _source: {}}
+})
 
 execute(['index *event', 'index *session', 'index *speaker', 'index *speaker2', 'index *hindi', 'index *english'], ctx)//Create event
 .then((res) => {//LINK event with session
