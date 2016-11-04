@@ -1,3 +1,14 @@
+
+#Setup:
+1. Run elasticsearch deamon in a docker:
+  a) Run this command to allow bootstrapping successfully on host:
+    sudo sysctl -w vm.max_map_count=262144
+  b) Copy "Dockerfile" content from : https://raw.githubusercontent.com/docker-library/elasticsearch/8347a4697d32878dbacd7086b34f76a9e19113ae/2.3/Dockerfile
+  into a new directory.
+  c) Run: docker run -d elasticsearch
+This will run Elasticsearch deamon in a new docker.
+You would need to commit the running docker. You can google it.
+2. 
 #Elasticsearch in nodejs ++
 
 Request batching for heavy load performance optimization and some useful utlity methods added on top of Elasticsearch's official nodejs module v ^10.0.1
